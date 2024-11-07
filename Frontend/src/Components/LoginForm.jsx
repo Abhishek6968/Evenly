@@ -40,6 +40,9 @@ const LoginForm = () => {
             console.error('Error during user check', error);
         }
     };
+    const signup=()=>{
+        navigate('/register');
+    }
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor="#f0f2f5">
@@ -54,6 +57,8 @@ const LoginForm = () => {
                         <MenuItem value="organizer">Organizer</MenuItem>
                     </TextField>
                     <Button variant="contained" color="primary" type="submit" fullWidth style={{ marginTop: '16px' }}>Login</Button>
+                    <Button variant="contained" color="primary" onClick={signup} fullWidth style={{ marginTop: '16px' }}>Create an Account</Button>
+
                 </form>
             </Paper>
         </Box>

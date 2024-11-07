@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Card, CardContent, CardMedia, Typography, Grid, Button, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import './Home.css'; // Import the CSS file
 
 export const Home = () => {
     const [data, setData] = useState([]);
@@ -13,62 +17,87 @@ export const Home = () => {
             .catch((err) => console.log(err));
     }, []);
 
-    // const handleLogin = () => {
-    //     navigate('/login');
-    // };
+    const handleViewDetails = (eventId) => {
+        navigate(`/event/${eventId}`);
+    };
+
+    // Carousel settings
+    const settings = {
+        dots: true,
+        infinite: true,
+        speed: 500,
+        slidesToShow: 3, // Adjust to the desired number of columns per row
+        slidesToScroll: 1,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 1,
+                }
+            },
+            {
+                breakpoint: 600,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1,
+                }
+            }
+        ]
+    };
 
     return (
-        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="20vh">
-            {/* <Button variant="contained" color="primary" onClick={handleLogin}>
-                Login
-            </Button> */}
-            
-            <Grid container spacing={2} justifyContent="center" sx={{ padding: '20px', marginTop: '20px' }}>
+        <Box className="carousel-container">
+            <Slider {...settings} style={{ width: '100%' }}>
                 {data.map((row) => (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={row._id}>
-                        <Card 
-                            sx={{ 
-                                width: '100%',
-                                height: 'auto',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'space-between',
-                                transition: 'transform 0.3s ease-in-out',
-                                '&:hover': { 
-                                    transform: 'scale(1.05)' 
-                                }
-                            }}
-                        >
+                    <Box key={row._id} px={2}>
+                        <Card className="carousel-card">
                             <CardMedia
                                 component="img"
-                                height="120"
-                                image={row.media.images[0]}
-                                alt={row.organizer.name}
+                                className="carousel-card-media"
+                                image={row.media?.images?.[0] || 'default_image_url.jpg'}
+                                alt={row.eventName}
                             />
                             <CardContent sx={{ padding: '16px', flex: '1 0 auto' }}>
-                                <Typography gutterBottom variant="h6" component="div">
+                                <Typography className="carousel-event-name" variant="h6" component="div">
                                     <strong>Event Name:</strong> {row.eventName}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    <strong>Date:</strong> {new Date(row.date.startDate).toLocaleDateString()} - {new Date(row.date.endDate).toLocaleDateString()}
+                                <Typography className="carousel-date-time" variant="body2" color="text.secondary">
+                                    <strong>Date:</strong> {new Date(row.date).toLocaleDateString()}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    <strong>Time:</strong> {`${row.time.startTime} - ${row.time.endTime} ${row.time.timezone}`}
+                                <Typography className="carousel-date-time" variant="body2" color="text.secondary">
+                                    <strong>Time:</strong> {row.time}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ marginTop: '8px' }}>
-                                    <strong>Location:</strong> {`${row.location.venue}, ${row.location.city}`}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ marginTop: '8px' }}>
-                                    <strong>Organizer:</strong> {row.organizer.name}
-                                </Typography>
+                                {row.format === 'Offline' && (
+                                    <Typography className="carousel-location" variant="body2" color="text.secondary">
+                                        <strong>Location:</strong> {row.location ? `${row.location.venue}, ${row.location.city}` : 'Location not available'}
+                                    </Typography>
+                                )}
+                                {row.format === 'Online' && (
+                                    <Typography className="carousel-virtual-link" variant="body2" color="text.secondary">
+                                        <strong>Virtual Link:</strong> 
+                                        {row.location?.virtualLink ? (
+                                            <a href={row.location.virtualLink} target="_blank" rel="noopener noreferrer">
+                                                {row.location.virtualLink}
+                                            </a>
+                                        ) : (
+                                            "NA"
+                                        )}
+                                    </Typography>
+                                )}
                             </CardContent>
-                            <Button variant="contained" color="primary" sx={{ margin: '16px', flexShrink: 0 }}>
-                                View Details
+                            <Button 
+                                variant="contained" 
+                                color="primary" 
+                                className="carousel-button" 
+                                onClick={() => handleViewDetails(row._id)}
+                            >
+                                Buy Now
                             </Button>
                         </Card>
-                    </Grid>
+                    </Box>
                 ))}
-            </Grid>
+            </Slider>
         </Box>
     );
 };
