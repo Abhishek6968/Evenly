@@ -1,5 +1,7 @@
 const express=require('express');
 const app=express();
+app.use(express.json());
+
 const cors=require('cors');
 const morgan=require('morgan');
 app.use(morgan('dev'));
@@ -13,7 +15,8 @@ const userRoutes=require('./routes/user');
 app.use('/user',userRoutes);
 const adminRoutes=require('./routes/adminRoutes');
 app.use('/admin',adminRoutes);
-
+const paymentRoutes=require('./routes/booking');
+app.use('/book',paymentRoutes);
 
 
 app.listen(PORT,()=>{
