@@ -9,7 +9,7 @@ import { AuthProvider } from './AuthContext';
 import EventForm from './Components/Organizer/EventForm';
 import { Hero } from './Components/Hero/Hero';
 import AdminEvents from './Components/Admin/AdminEvents';
-
+import { EventDetails } from './Components/Pages/EventDetails';
 function App() {
   return (
     
@@ -24,6 +24,8 @@ function App() {
         <Route path="/organizer/myevents" element={<EventForm />} />
         <Route path="/register" element={<SignUp />} /> 
         <Route path="/admin/events" element={<AdminEvents />} />
+        <Route path="/event/:eventId" element={<EventDetails />} />
+
 
 
       </Routes>
