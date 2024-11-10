@@ -1,45 +1,115 @@
-// server-side route for booking (e.g., routes/booking.js)
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const Razorpay = require('razorpay');
 const router = express.Router();
 const Event = require('../models/eventData');
 const Booking = require('../models/Booking');
+const Order = require('../models/orderData'); 
+const crypto = require('crypto');
+
+
+
+// Initialize Razorpay instance
+const razorpay = new Razorpay({
+  key_id: 'rzp_test_ipCtKOkJvSDDZC', // Razorpay Key
+  key_secret: 'kUeOf6NfOQfBHtWFKr8Fi1DW' // Razorpay Secret
+});
 
 router.post('/book-ticket/:eventId', async (req, res) => {
   try {
-      const token = req.headers.authorization?.split(' ')[1];
-      if (!token) return res.status(401).json({ message: 'Authorization token missing' });
-      
-      const decoded = jwt.verify(token, 'secret');
-      const { eventId } = req.params;
-      const { tickets } = req.body;
-      const userId = decoded.userId;
-      const ticketsCount = parseInt(tickets, 10);
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Authorization token missing' });
 
-      if (isNaN(ticketsCount)) {
-        return res.status(400).json({ message: 'Invalid ticket count' });
-      }
+    const decoded = jwt.verify(token, 'secret');
+    const { eventId } = req.params;
+    const { tickets, userDetails } = req.body;
+    const userId = decoded.userId;
+    const event = await Event.findById(eventId);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+    if (event.ticketing.capacity < tickets) {
+      return res.status(400).json({ message: 'Not enough seats available' });
+    }
 
-      const event = await Event.findById(eventId);
-      if (!event) return res.status(404).json({ message: 'Event not found' });
-      if (event.ticketing.capacity < ticketsCount) return res.status(400).json({ message: 'Not enough seats available' });
+    const amount = tickets * event.ticketing.price*100; 
 
-      // Create booking with the correct field name 'ticketCount'
-      const booking = new Booking({ 
-        userId, 
-        eventId, 
-        ticketCount: ticketsCount, // Use ticketCount here
-        paymentStatus: 'completed' 
-      });
+    // Razorpay order creation
+    const order = await razorpay.orders.create({
+      amount: amount,
+      currency: 'INR',
+      receipt: `receipt_order_${new Date().getTime()}`,
+    });
 
-      event.ticketing.capacity -= ticketsCount;
-      await event.save();
-      await booking.save();
+    if (!order) {
+      return res.status(500).json({ message: 'Error creating Razorpay order' });
+    }
 
-      res.status(200).json({ message: 'Ticket booked successfully', booking });
+    // Save order data in DB for future reference
+    const orderData = new Order({
+      orderId: order.id,
+      userId,
+      eventId,
+      tickets,
+      userDetails,
+      status: 'pending',
+      amount:amount,
+    });
+    await orderData.save();
+
+    // Return Razorpay order ID to frontend
+    res.status(200).json({
+      orderData,
+      orderId: order.id,
+      amount,
+    });
+
   } catch (error) {
-      console.error('Error booking ticket:', error);
-      res.status(500).json({ error: 'Error booking ticket' });
+    console.error('Error booking ticket:', error);
+    res.status(500).json({ error: 'Error booking ticket' });
+  }
+});
+
+   
+router.post('/verify-payment', async (req, res) => {
+  try {
+    const { order_id, payment_id } = req.body;
+
+    // Find the order in the database by order ID
+    const order = await Order.findOne({ orderId: order_id });
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    // Check if the payment ID matches the Razorpay order ID
+    if (order.paymentId && order.paymentId !== payment_id) {
+      return res.status(400).json({ message: 'Payment verification failed: mismatched payment ID' });
+    }
+
+    // Ensure that the payment status is not already completed
+    if (order.status === 'confirmed') {
+      return res.status(400).json({ message: 'Order already confirmed' });
+    }
+
+    // Mark the order as confirmed and save the payment ID
+    order.status = 'confirmed';
+    order.paymentId = payment_id;
+    await order.save();
+
+    // Reduce the event capacity
+    const event = await Event.findById(order.eventId);
+    event.ticketing.capacity -= order.tickets;
+    await event.save();
+
+    // Create a booking record
+    const booking = new Booking({
+      userId: order.userId,
+      eventId: order.eventId,
+      ticketCount: order.tickets,
+      paymentStatus: 'completed',
+    });
+    await booking.save();
+
+    res.status(200).json({ message: 'Payment confirmed, booking successful' });
+  } catch (error) {
+    console.error('Error verifying payment:', error);
+    res.status(500).json({ error: 'Error verifying payment' });
   }
 });
 
