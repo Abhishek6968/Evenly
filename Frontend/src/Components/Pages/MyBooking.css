@@ -1,0 +1,38 @@
+.bookings-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px;
+    justify-content: center;
+  }
+  
+  .booking-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    width: 300px;
+    margin: 10px;
+  }
+  
+  .booking-card h3 {
+    color: #333;
+    margin-top: 0;
+  }
+  
+  .booking-card p {
+    color: #555;
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  
+  .booking-card a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .booking-card a:hover {
+    text-decoration: underline;
+  }
+  

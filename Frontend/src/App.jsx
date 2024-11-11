@@ -1,7 +1,6 @@
 import './App.css';
 import { Home } from './Components/Home';
 import LoginForm from './Components/LoginForm';
-import { Test } from './Components/Test';
 import { Route, Routes } from 'react-router-dom';
 import SignUp from './Components/SignUp';
 import Navbar from './Components/Navbar';
@@ -10,6 +9,8 @@ import EventForm from './Components/Organizer/EventForm';
 import { Hero } from './Components/Hero/Hero';
 import AdminEvents from './Components/Admin/AdminEvents';
 import { EventDetails } from './Components/Pages/EventDetails';
+import MyBookings from './Components/Pages/MyBookings';
+import Footer from './Components/Programs/Footer';
 function App() {
   return (
     
@@ -17,7 +18,7 @@ function App() {
       <Navbar /> 
 
       <Routes>
-      <Route path="/" element={<><Hero /><Home /></>} /> {/* Render Hero with Home */}
+      <Route path="/" element={<><Hero /><Home /><Footer /></>} /> {/* Render Hero with Home */}
 
         <Route path="/login" element={<LoginForm />} />
         <Route path="/user" element={<><Hero /><Home /></>} />
@@ -25,6 +26,8 @@ function App() {
         <Route path="/register" element={<SignUp />} /> 
         <Route path="/admin/events" element={<AdminEvents />} />
         <Route path="/event/:eventId" element={<EventDetails />} />
+        <Route path="/user/bookings" element={<MyBookings />} />
+
 
 
 

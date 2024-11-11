@@ -140,6 +140,24 @@ router.post('/verify-payment', async (req, res) => {
   }
 });
 
+router.get('/my-bookings', async (req, res) => {
+  try {
+    // Extract user ID from the JWT token
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Authorization token missing' });
+
+    const decoded = jwt.verify(token, 'secret'); // Use the correct secret for JWT verification
+    const userId = decoded.userId;
+
+    // Find all bookings made by the user
+    const bookings = await Booking.find({ userId }).populate('eventId', 'eventName date location');
+
+    res.status(200).json({ bookings });
+  } catch (error) {
+    console.error('Error retrieving bookings:', error);
+    res.status(500).json({ error: 'Error retrieving bookings' });
+  }
+});
 
 
 module.exports = router;
