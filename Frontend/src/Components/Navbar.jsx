@@ -22,10 +22,11 @@ const Navbar = () => {
             <ul>
                 <li><Link to="/">Home</Link></li>
                 {location.pathname === '/' && !userType &&<> 
-                <li><Link to="/login">Login</Link></li>
                 <li><Link to="/">About Us</Link></li>
                 <li><Link to="/">Testimonials</Link></li>
-                <li><Link to="/"><button className='btn'>Contact Us</button></Link></li>
+                <li><Link to="/">Contact Us</Link></li>
+                <li><Link to="/login"><button className='btn'>Login</button></Link></li>
+
 
                 </>
                 }
@@ -41,7 +42,7 @@ const Navbar = () => {
                 {userType === 'user' && (
                     <>
                         <li><Link to="/user/bookings">My Bookings</Link></li>
-                        <li><button onClick={handleLogout}>Logout</button></li>
+                        <li><button onClick={handleLogout} className='btn'>Logout</button></li>
                     </>
                 )}
 
@@ -50,7 +51,7 @@ const Navbar = () => {
                         <li><Link to="/admin/dashboard">Dashboard</Link></li>
                         <li><Link to="/admin/users">Manage Users</Link></li>
                         <li><Link to="/admin/events">Manage Events</Link></li>
-                        <li><button onClick={handleLogout}>Logout</button></li>
+                        <li><button onClick={handleLogout} className='btn'>Logout</button></li>
                     </>
                 )}
 
@@ -59,7 +60,7 @@ const Navbar = () => {
                         <li><Link to="/organizer/myevents">Add Event</Link></li>
                         <li><Link to="/organizer/bookings">View Bookings</Link></li>
                         <li><Link to="/organizer/notifications">Send Notifications</Link></li>
-                        <li><button onClick={handleLogout}>Logout</button></li>
+                        <li><button onClick={handleLogout} className='btn'>Logout</button></li>
                     </>
                 )}
             </ul>

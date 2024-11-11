@@ -6,13 +6,21 @@ const Event = require('../models/eventData');
 const Booking = require('../models/Booking');
 const Order = require('../models/orderData'); 
 const crypto = require('crypto');
-
+const nodemailer = require('nodemailer');
+require('dotenv').config();
 
 
 // Initialize Razorpay instance
 const razorpay = new Razorpay({
   key_id: 'rzp_test_ipCtKOkJvSDDZC', // Razorpay Key
   key_secret: 'kUeOf6NfOQfBHtWFKr8Fi1DW' // Razorpay Secret
+});
+const transporter = nodemailer.createTransport({
+  service: 'Gmail', // or use 'SMTP' if you have specific settings
+  auth: {
+    user: process.env.EMAIL_USER, // Replace with your email
+    pass: process.env.EMAIL_PASS // Replace with your email password or use environment variables for security
+  }
 });
 
 router.post('/book-ticket/:eventId', async (req, res) => {
@@ -88,12 +96,15 @@ router.post('/verify-payment', async (req, res) => {
     }
 
     // Mark the order as confirmed and save the payment ID
+    order.paymentStatus = 'completed';
     order.status = 'confirmed';
     order.paymentId = payment_id;
     await order.save();
 
     // Reduce the event capacity
     const event = await Event.findById(order.eventId);
+    if (!event) return res.status(404).json({ message: 'Event not found' });
+
     event.ticketing.capacity -= order.tickets;
     await event.save();
 
@@ -106,10 +117,26 @@ router.post('/verify-payment', async (req, res) => {
     });
     await booking.save();
 
-    res.status(200).json({ message: 'Payment confirmed, booking successful' });
+    // Send confirmation email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: order.userDetails.email,
+      subject: 'Booking Confirmation for Your Event',
+      text: `Dear ${order.userDetails.name},\n\nThank you for booking ${order.tickets} ticket(s) for the event "${event.eventName}". Your booking has been confirmed.\n\nBest regards,\nEvenly Team`
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully');
+      return res.status(200).json({ message: 'Booking successful and email sent' });
+    } catch (emailError) {
+      console.error('Error sending email:', emailError);
+      return res.status(200).json({ message: 'Booking successful, but email failed to send' });
+    }
+
   } catch (error) {
     console.error('Error verifying payment:', error);
-    res.status(500).json({ error: 'Error verifying payment' });
+    res.status(500).json({ message: 'Error verifying payment. Please try again later.' });
   }
 });
 

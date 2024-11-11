@@ -16,10 +16,16 @@ export const EventDetails = () => {
             setMessage('Please log in to book an event.');
         }
     }, [user]);
+    const isValidEmail = (email) => /\S+@\S+\.\S+/.test(email);
+    const isValidPhone = (phone) => /^\d{10}$/.test(phone);
 
     const handlePayment = async () => {
         if (!user) {
             setMessage('User not authenticated. Please log in.');
+            return;
+        }
+        if (!userDetails.name || !isValidEmail(userDetails.email) || !isValidPhone(userDetails.phone)) {
+            setMessage('Please enter valid details');
             return;
         }
     
@@ -53,7 +59,7 @@ export const EventDetails = () => {
                         setMessage('Payment successful and booking confirmed!');
                     } catch (verificationError) {
                         console.error('Verification failed:', verificationError);
-                        setMessage('Payment verification failed.');
+                        setMessage(verificationError.response.data.message);
                     }
                 },
                 prefill: {
@@ -65,9 +71,10 @@ export const EventDetails = () => {
     
             const rzp = new window.Razorpay(options);
             rzp.open();
-        } catch (error) {
-            setMessage(error.response.data.message);
-    };
+        }catch (error) {
+            console.error('Error:', error);
+            setMessage(error.response ? error.response.data.message : 'An error occurred. Please try again.');
+        };
     
     }
     return (
@@ -105,7 +112,8 @@ export const EventDetails = () => {
             <Button variant="contained" color="primary" onClick={handlePayment} disabled={!user || !userDetails.name || !userDetails.email || !userDetails.phone}>
                 Pay and Book Now
             </Button>
-            {message && <Typography variant="body1" color="error">{message}</Typography>}
+            {message && <Typography variant="body1" color={message.includes('successful') ? 'primary' : 'error'}>{message}</Typography>}
+
         </Box>
     );
 };
