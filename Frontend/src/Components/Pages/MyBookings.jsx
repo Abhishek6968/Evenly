@@ -24,23 +24,57 @@ const Bookings = () => {
 
   return (
     <div className="bookings-container">
-      {bookings.map((booking) => (
-        <div key={booking._id} className="booking-card">
-          <h3>Event Details</h3>
-          <p><strong>Event Name:</strong> {booking.eventId.eventName}</p>
-          <p><strong>Date:</strong> {new Date(booking.eventId.date).toDateString()}</p>
-          <p><strong>Venue:</strong> {booking.eventId.location.venue || 'Online Event'}</p>
-          <p><strong>Address:</strong> {booking.eventId.location.address}</p>
-          {booking.eventId.location.virtualLink && (
-            <p><strong>Virtual Link:</strong> <a href={booking.eventId.location.virtualLink}>Join Event</a></p>
-          )}
-          <h3>Booking Details</h3>
-          <p><strong>Booking Date:</strong> {new Date(booking.bookingDate).toDateString()}</p>
-          <p><strong>Ticket Count:</strong> {booking.ticketCount}</p>
-          <p><strong>Payment Status:</strong> {booking.paymentStatus}</p>
-        </div>
-      ))}
+  {bookings.map((booking) => (
+    <div key={booking._id} className="booking-card">
+      <h3>Event Details</h3>
+      {/* Handle event name */}
+      <p>
+        <strong>Event Name:</strong> {booking.eventId && booking.eventId.eventName ? booking.eventId.eventName : "Event Name Unavailable"}
+      </p>
+
+      {/* Handle event date */}
+      <p>
+        <strong>Date:</strong> {booking.eventId && booking.eventId.date ? new Date(booking.eventId.date).toDateString() : "Date Unavailable"}
+      </p>
+
+      {/* Handle venue */}
+      <p>
+        <strong>Venue:</strong> {booking.eventId && booking.eventId.location && booking.eventId.location.venue ? booking.eventId.location.venue : "Venue Unavailable"}
+      </p>
+
+      {/* Handle address */}
+      <p>
+        <strong>Address:</strong> {booking.eventId && booking.eventId.location && booking.eventId.location.address ? booking.eventId.location.address : "Address Unavailable"}
+      </p>
+
+      {/* Handle virtual link */}
+      {booking.eventId && booking.eventId.location && booking.eventId.location.virtualLink ? (
+        <p>
+          <strong>Virtual Link:</strong> <a href={booking.eventId.location.virtualLink} target="_blank" rel="noopener noreferrer">Join Event</a>
+        </p>
+      ) : (
+        <p><strong>Virtual Link:</strong> Not Available</p>
+      )}
+
+      <h3>Booking Details</h3>
+      {/* Handle booking date */}
+      <p>
+        <strong>Booking Date:</strong> {booking.bookingDate ? new Date(booking.bookingDate).toDateString() : "Booking Date Unavailable"}
+      </p>
+
+      {/* Handle ticket count */}
+      <p>
+        <strong>Ticket Count:</strong> {booking.ticketCount ? booking.ticketCount : "Ticket Count Unavailable"}
+      </p>
+
+      {/* Handle payment status */}
+      <p>
+        <strong>Payment Status:</strong> {booking.paymentStatus ? booking.paymentStatus : "Payment Status Unavailable"}
+      </p>
     </div>
+  ))}
+</div>
+
   );
 };
 

@@ -79,8 +79,8 @@ const EventForm = () => {
     };
 
     return (
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" bgcolor="#f0f2f5">
-            <Paper elevation={3} style={{ padding: '20px', width: '400px' }}>
+                <Box className="event-form-container">
+                <Paper className="event-form-paper" elevation={3}>
                 <Typography variant="h5" component="h1" align="center" gutterBottom>
                     Submit Event for Approval
                 </Typography>

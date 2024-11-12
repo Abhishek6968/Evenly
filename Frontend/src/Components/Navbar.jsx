@@ -22,8 +22,8 @@ const Navbar = () => {
             <ul>
                 <li><Link to="/">Home</Link></li>
                 {location.pathname === '/' && !userType &&<> 
-                <li><Link to="/">About Us</Link></li>
-                <li><Link to="/">Testimonials</Link></li>
+                <li><Link to="aboutUs">About Us</Link></li>
+                {/* <li><Link to="/testimonial">Testimonials</Link></li> */}
                 <li><Link to="/">Contact Us</Link></li>
                 <li><Link to="/login"><button className='btn'>Login</button></Link></li>
 
@@ -48,7 +48,7 @@ const Navbar = () => {
 
                 {userType === 'admin' && (
                     <>
-                        <li><Link to="/admin/dashboard">Dashboard</Link></li>
+                        {/* <li><Link to="/admin/dashboard">Dashboard</Link></li> */}
                         <li><Link to="/admin/users">Manage Users</Link></li>
                         <li><Link to="/admin/events">Manage Events</Link></li>
                         <li><button onClick={handleLogout} className='btn'>Logout</button></li>

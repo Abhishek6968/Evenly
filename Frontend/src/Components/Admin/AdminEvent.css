@@ -1,0 +1,28 @@
+.event-box {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 16px;
+    background-color: #f9f9f9;
+}
+
+.event-columns {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.leftColumn,
+.rightColumn {
+    width: 48%;
+}
+
+.description {
+    white-space: normal; /* Ensures all text is shown */
+    word-wrap: break-word;
+    margin-bottom: 8px;
+}
+
+button {
+    margin-right: 10px;
+}

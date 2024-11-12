@@ -1,0 +1,70 @@
+/* Container to center the form */
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0 10px;
+    background-color: #f0f2f5;
+    box-sizing: border-box;
+  }
+  
+  /* Form Paper styling */
+  .paper {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 90vh; /* Constrain height within viewport */
+    background-color: #ffffff;
+  }
+  
+  /* Typography for header */
+  h5 {
+    font-size: 1.6em;
+    text-align: center;
+    margin: 10px 0 20px 0;
+    color: #333;
+  }
+  
+  /* Form Fields */
+  .MuiTextField-root,
+  .MuiFormControl-root {
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  
+  /* Select and Input fields */
+  .MuiInputBase-root {
+    background-color: #f7f7f7;
+    border-radius: 4px;
+  }
+  
+  /* Button styling */
+  .MuiButton-root {
+    background-color: #1976d2;
+    color: #ffffff;
+    padding: 10px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .MuiButton-root:hover {
+    background-color: #125a9e;
+  }
+  
+  /* Responsive adjustments for smaller screens */
+  @media (max-height: 700px) {
+    .box {
+      min-height: 100vh;
+      padding: 10px;
+    }
+    .paper {
+      max-height: 80vh;
+    }
+  }
+  

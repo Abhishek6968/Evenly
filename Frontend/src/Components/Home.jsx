@@ -7,6 +7,8 @@ import { EventCard } from './EventCard';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './Home.css'; // Import CSS for styling
+import './Programs/Testimonial';
+import Testimonial from './Programs/Testimonial';
 
 export const Home = () => {
     const [data, setData] = useState([]);
@@ -30,6 +32,7 @@ export const Home = () => {
     };
 
     return (
+        <>
         <Box className="carousel-container">
             <Slider {...settings} style={{ width: '100%' }}>
                 {data.map((event) => (
@@ -37,5 +40,8 @@ export const Home = () => {
                 ))}
             </Slider>
         </Box>
+        <Testimonial />
+        </>
+
     );
 };

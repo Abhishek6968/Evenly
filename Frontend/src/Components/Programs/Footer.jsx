@@ -8,7 +8,7 @@ const Footer = () => {
         
         {/* Logo and Description */}
         <div className="footer-about">
-          <h2>YourCompany</h2>
+          <h2>Evenly</h2>
           <p>Providing quality services since 2024. We prioritize customer satisfaction and excellence in our field.</p>
         </div>
         
